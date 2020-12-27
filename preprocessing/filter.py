@@ -80,10 +80,8 @@ class Preprocessor():
         try:
             gray = cv.cvtColor(img, self.toGray)
             blur = cv.GaussianBlur(gray, self.ksize, self.sigmaX)
-        
         except:
             raise ImageProcessingError("Error in Preprocessor._gray method")
-
         else:
             return blur
     
@@ -102,10 +100,8 @@ class Preprocessor():
         """   
         try:
             converted = cv.cvtColor(img, self.toBGR)
-        
         except:
             raise ImageProcessingError("Error in Preprocessor._grayTobgr method")
-
         else:
             return converted
     
@@ -123,12 +119,9 @@ class Preprocessor():
             cv2 image: filtered image
         """ 
         try:
-            tresholdimage = cv.adaptiveThreshold( img,
-                                            self.tresholdMaxValue,
-                                            self.adaptiveMethod,
-                                            self.tresholdType,
-                                            self.tresholdBlockSize,
-                                            self.C)
+            tresholdimage = cv.adaptiveThreshold(img, self.tresholdMaxValue,
+                                            self.adaptiveMethod, self.tresholdType,
+                                            self.tresholdBlockSize, self.C)
         except:
             raise ImageProcessingError("Error in Preprocessor._treshold method")
         else:
