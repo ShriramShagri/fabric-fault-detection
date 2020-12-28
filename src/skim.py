@@ -8,7 +8,7 @@ import skimage.viewer
 # get filename and sigma value from command line
 # filename = sys.argv[1]
 # sigma = float(sys.argv[2])
-filename = '20.jpg'
+filename = '22.jpg'
 sigma = float(5)
 
 # read and display the original image
