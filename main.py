@@ -76,9 +76,9 @@ def predict(path, weights = None, batchOfImages = False):
                 pred2 = model2.predict(batch)
                 print(pred2)
                 if pred2 > 0.5:
-                    text_labels.append('Hole/Stain')
-                else:
                     text_labels.append('Missing Thread')
+                else:
+                    text_labels.append('Hole/Stain')
             else:
                 text_labels.append('No defect')
                 
@@ -86,20 +86,20 @@ def predict(path, weights = None, batchOfImages = False):
             plt.title(text_labels[i])
             imgplot = plt.imshow(batch[0])
             i+=1
-            if i%1 == 0:
+            if i%10 == 0:
                 break
         
         if not batchOfImages:
             plt.subplot(5/columns+1, columns, 3)
             plt.title("Original")
             imgplot = plt.imshow(cv.cvtColor(cv.imread(path) , cv.COLOR_BGR2RGB))
-            plt.show()
+        plt.show()
     except:
         raise PredictionError("Error during prediction")
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        predict(sys.argv[1])
+        predict(sys.argv[1], batchOfImages=sys.argv[2] == 'True')
     else:
-        predict('C:\\Users\\Shagri\\Desktop\\DIP\\Dataset\\Dataset_45\\Thread_missing\\image666.jpeg')
+        predict('C:\\Users\\Shagri\\Desktop\\DIP\\Dataset\\Dataset_45\\Thread_missing\\6.jpg')
