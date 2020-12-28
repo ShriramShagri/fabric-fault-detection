@@ -2,11 +2,12 @@ import os
 import random
 import gc
 import numpy as np
+
 from sklearn.model_selection import train_test_split
 from .preprocessing import *
 
 
-def preprocessing(lPath1, lPath2):
+def preprocessing(lPath1, lPath2, overflow = False):
     """Preprocess image before giving into model
 
     Args:
@@ -36,30 +37,51 @@ def preprocessing(lPath1, lPath2):
         return x, y
 
     if not (os.path.exists(lPath1) and os.path.exists(lPath2)):
-        raise Exception
+        raise DatasetDirectoryNotFoundError("One or more dataset paths mentioned doesn't exist.")
     
+    # Load training image paths into list
     train_1 = [[os.path.join(lPath1, i), 0] for i in os.listdir(lPath1)]
     train_2 = [[os.path.join(lPath2, i), 1] for i in os.listdir(lPath2)]
 
-    train_images = train_1 + train_2
-    random.shuffle(train_images)
+    try:
 
-    del train_1
-    del train_2
-    gc.collect()
+        if overflow:
+            # If more data is present limit the dataset to 2000 images
+            random.shuffle(train_1)
+            train_1 = train_1[:2000]
 
-    X, y = process(train_images)
+            random.shuffle(train_2)
+            train_2 = train_2[:2000]
+            
+        # Merge and shuffle the datasets
+        train_images = train_1 + train_2
+        random.shuffle(train_images)
 
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.20, random_state=2)
+        # Delete unwanted listst to free space using garbage collection
+        del train_1
+        del train_2
+        gc.collect()
 
-    X_train  = np.array(X_train)
-    X_val  = np.array(X_val)
-    y_train  = np.array(y_train)
-    y_val  = np.array(y_val)
+        # Generate two arrays which has shuffled dataset and corresponding labels in the other array
+        X, y = process(train_images)
 
-    del X
-    del y
-    gc.collect()
+        # Split the dataset into train and validation set
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.20, random_state=2)
 
-    return X_train, X_val, y_train, y_val
+        # Convert the output into numpy array
+        X_train  = np.array(X_train)
+        X_val  = np.array(X_val)
+        y_train  = np.array(y_train)
+        y_val  = np.array(y_val)
+
+        # Delete unwanted listst to free space using garbage collection
+        del X
+        del y
+        gc.collect()
+    
+    except:
+        raise DataPreprocessingError("Cannot process image data. Error in src.datapreprocessing.py preprocessing function")
+
+    else:
+        return X_train, X_val, y_train, y_val
 
